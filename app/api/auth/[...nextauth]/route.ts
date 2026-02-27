@@ -12,22 +12,34 @@ export const authOptions = {
         password: {},
       },
       async authorize(credentials) {
+        console.log("CREDENTIALS:", credentials);
         if (!credentials?.email || !credentials?.password) {
+          console.log("Missing credentials");
           return null
         }
+       
 
         const user = await db.user.findUnique({
           where: { email: credentials.email }
         })
+        console.log("DB USER:", user)
 
-        if (!user) return null
+        if (!user){
+          console.log("User not found");
+          return null
+        }
 
         const isValid = await compare(
           credentials.password,
           user.password
         )
 
-        if (!isValid) return null
+        console.log("PASSWORD MATCH:", isValid);
+
+        if (!isValid) {
+          console.log("Invalid password")
+          return null
+        }
 
         return {
           id: user.id,
