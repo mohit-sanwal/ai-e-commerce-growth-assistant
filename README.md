@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+🤖 What Is an AI E-Commerce Growth Assistant?
+
+A system that analyzes your store data and gives business recommendations automatically.
+
+Think like this:
+
+Instead of you manually checking:
+Revenue
+Orders
+Stock
+
+The system tells you:
+“Product A is selling 3x faster than others.”
+“You will run out of stock in 2 days.”
+“Revenue dropped 18% this week.”
+“Consider increasing price of X.”
+That is a growth assistant.
