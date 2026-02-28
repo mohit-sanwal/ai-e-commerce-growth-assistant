@@ -18,42 +18,57 @@ export async function POST(req: Request) {
     return new Response("User not found", { status: 404 })
   }
 
-  const body = await req.json()
-  const { productId, quantity } = body
+  const { productId, quantity } = await req.json()
 
-  const product = await db.product.findUnique({
-    where: { id: productId }
-  })
+  try {
+    const result = await db.$transaction(async (tx) => {
 
-  if (!product) {
-    return new Response("Product not found", { status: 404 })
+      // 1️⃣ Atomically decrement stock ONLY if available
+      const stockUpdate = await tx.product.updateMany({
+        where: {
+          id: productId,
+          stock: { gte: quantity }
+        },
+        data: {
+          stock: {
+            decrement: quantity
+          }
+        }
+      })
+
+      // If no rows updated → insufficient stock
+      if (stockUpdate.count === 0) {
+        throw new Error("Insufficient stock")
+      }
+
+      // 2️⃣ Fetch product price (after stock confirmed)
+      const product = await tx.product.findUnique({
+        where: { id: productId }
+      })
+
+      if (!product) {
+        throw new Error("Product not found")
+      }
+
+      // 3️⃣ Create order
+      const order = await tx.order.create({
+        data: {
+          quantity,
+          totalPrice: Number(product.price) * quantity,
+          userId: user.id,
+          productId: product.id
+        }
+      })
+
+      return order
+    })
+
+    return Response.json(result)
+
+  } catch (error: any) {
+    return new Response(error.message, { status: 400 })
   }
-
-  if (product.stock < quantity) {
-    return new Response("Insufficient stock", { status: 400 })
-  }
-
-  const totalPrice = Number(product.price) * quantity
-
-  const order = await db.order.create({
-    data: {
-      quantity,
-      totalPrice,
-      productId: product.id,
-      userId: user.id,
-    }
-  })
-
-  await db.product.update({
-    where: { id: product.id },
-    data: {
-      stock: product.stock - quantity
-    }
-  })
-
-  return Response.json(order)
 }
-
 
 // GET
 export async function GET() {
