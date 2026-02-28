@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
+// POST
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions)
 
@@ -18,20 +19,43 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
+  const { productId, quantity } = body
 
-  const product = await db.product.create({
+  const product = await db.product.findUnique({
+    where: { id: productId }
+  })
+
+  if (!product) {
+    return new Response("Product not found", { status: 404 })
+  }
+
+  if (product.stock < quantity) {
+    return new Response("Insufficient stock", { status: 400 })
+  }
+
+  const totalPrice = Number(product.price) * quantity
+
+  const order = await db.order.create({
     data: {
-      name: body.name,
-      price: body.price,
-      category: body.category,
-      stock: body.stock,
+      quantity,
+      totalPrice,
+      productId: product.id,
       userId: user.id,
     }
   })
 
-  return Response.json(product)
+  await db.product.update({
+    where: { id: product.id },
+    data: {
+      stock: product.stock - quantity
+    }
+  })
+
+  return Response.json(order)
 }
 
+
+// GET
 export async function GET() {
   const session = await getServerSession(authOptions)
 
@@ -47,12 +71,13 @@ export async function GET() {
     return new Response("User not found", { status: 404 })
   }
 
-  const products = await db.product.findMany({
+  const orders = await db.order.findMany({
     where: { userId: user.id },
+    include: {
+      product: true
+    },
     orderBy: { createdAt: "desc" }
   })
 
-  console.log('products list--', products)
-
-  return Response.json(products)
+  return Response.json(orders)
 }
