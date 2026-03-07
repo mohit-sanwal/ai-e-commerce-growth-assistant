@@ -21,6 +21,7 @@ export async function GET() {
       revenueLastWeek,
       weeklySales,
       lowStockProducts,
+      revenueTrendRaw,
     ] = await Promise.all([
       prisma.order.aggregate({
         _sum: { totalPrice: true },
@@ -51,6 +52,17 @@ export async function GET() {
       prisma.product.findMany({
         where: { stock: { lt: 5 } },
       }),
+
+      // 📈 Revenue trend raw data (last 7 days)
+      prisma.order.findMany({
+        // where: {
+        //   createdAt: { gte: startOfThisWeek },
+        // },
+        select: {
+          createdAt: true,
+          totalPrice: true,
+        },
+      }),
     ])
 
     // 📊 Revenue Metrics
@@ -64,6 +76,30 @@ export async function GET() {
       lastWeekRevenue > 0
         ? ((thisWeekRevenue - lastWeekRevenue) / lastWeekRevenue) * 100
         : 0
+
+    // 📈 Revenue Trend (last 7 days)
+    const revenueMap: Record<string, number> = {}
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date()
+      d.setDate(now.getDate() - i)
+
+      const day = d.toLocaleDateString("en-US", { weekday: "short" })
+      revenueMap[day] = 0
+    }
+
+    for (const order of revenueTrendRaw) {
+      const day = new Date(order.createdAt).toLocaleDateString("en-US", {
+        weekday: "short",
+      })
+
+      revenueMap[day] += Number(order.totalPrice)
+    }
+
+    const revenueTrend = Object.entries(revenueMap).map(([day, revenue]) => ({
+      day,
+      revenue,
+    }))
 
     // 📉 Revenue Trend Insights
     if (revenueGrowth < -10) {
@@ -132,6 +168,7 @@ export async function GET() {
       totalOrders,
       revenueGrowth: Number(revenueGrowth.toFixed(2)),
       insights,
+      revenueTrend,
     })
   } catch (error) {
     console.error("AI Insights Error:", error)
