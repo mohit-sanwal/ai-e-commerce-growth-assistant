@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "../api/auth/[...nextauth]/route"
 import { redirect } from "next/navigation"
-import RevenueChart from "@/components/RevenueChart"
+import RevenueChartClient from "@/components/RevenueChartClient"
 
 async function getInsights() {
   const res = await fetch(
@@ -86,7 +86,7 @@ export default async function Dashboard() {
           Revenue Trend (Last 7 Days)
         </h2>
 
-        <RevenueChart data={data.revenueTrend || []} />
+        <RevenueChartClient data={data.revenueTrend || []} />
       </div>
     </div>
   )
