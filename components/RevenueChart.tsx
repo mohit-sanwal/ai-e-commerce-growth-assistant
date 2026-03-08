@@ -18,13 +18,20 @@ interface Props {
 }
 
 export default function RevenueChart({ data }: Props) {
+
+  console.log("chart data:", data)
+
+  if (!data || data.length === 0) {
+    return <p className="text-zinc-400">No data available</p>
+  }
+
   return (
-    <div className="h-[300px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div style={{ width: "100%", height: 320 }}>
+      <ResponsiveContainer>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-          <XAxis dataKey="day" stroke="#aaa" />
-          <YAxis stroke="#aaa" />
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="day" />
+          <YAxis />
           <Tooltip />
           <Line
             type="monotone"
