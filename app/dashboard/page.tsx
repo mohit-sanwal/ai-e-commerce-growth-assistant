@@ -25,43 +25,55 @@ export default async function Dashboard() {
   console.log("data.revenueTrend..", data.revenueTrend);
 
   return (
-    <div className="p-6 space-y-8">
+  <div className="p-8 space-y-8">
 
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-zinc-400 text-sm">
-          AI-powered insights for your store
-        </p>
-      </div>
+    {/* Header */}
+    <div>
+      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <p className="text-zinc-400 text-sm">
+        AI-powered insights for your store
+      </p>
+    </div>
+
+    {/* Dashboard Grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
       {/* KPI Cards */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800 transition">
-          <p className="text-sm text-zinc-400">Total Revenue</p>
-          <p className="text-3xl font-bold mt-2">
-            ₹{data.totalRevenue}
-          </p>
-        </div>
+      <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-xl shadow hover:border-zinc-700 transition">
+        <h2 className="text-lg font-semibold mb-4">Store Overview</h2>
 
-        <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800 transition">
-          <p className="text-sm text-zinc-400">Total Orders</p>
-          <p className="text-3xl font-bold mt-2">
-            {data.totalOrders}
-          </p>
-        </div>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 bg-zinc-800 rounded-lg">
+            <p className="text-xs text-zinc-400">Revenue</p>
+            <p className="text-xl font-bold">₹{data.totalRevenue}</p>
+          </div>
 
-        <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800 transition">
-          <p className="text-sm text-zinc-400">Revenue Growth</p>
-          <p className="text-3xl font-bold mt-2 text-green-400">
-            {data.revenueGrowth}%
-          </p>
+          <div className="p-4 bg-zinc-800 rounded-lg">
+            <p className="text-xs text-zinc-400">Orders</p>
+            <p className="text-xl font-bold">{data.totalOrders}</p>
+          </div>
+
+          <div className="p-4 bg-zinc-800 rounded-lg">
+            <p className="text-xs text-zinc-400">Growth</p>
+            <p className="text-xl font-bold text-green-400">
+              {data.revenueGrowth}%
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* AI Insights Panel */}
+      {/* Revenue Chart */}
       <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-xl">
-        <h2 className="text-xl font-semibold mb-4">
+        <h2 className="text-lg font-semibold mb-4">
+          Revenue Trend
+        </h2>
+
+        <RevenueChartClient data={data.revenueTrend || []} />
+      </div>
+
+      {/* AI Insights */}
+      <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-xl">
+        <h2 className="text-lg font-semibold mb-4">
           🤖 AI Growth Insights
         </h2>
 
@@ -69,25 +81,26 @@ export default async function Dashboard() {
           {data.insights.map((insight: string, index: number) => (
             <div
               key={index}
-              className="flex items-start gap-3 p-4 bg-zinc-800 border border-zinc-700 rounded-lg"
+              className="p-3 bg-zinc-800 rounded-lg text-sm"
             >
-              <span className="text-yellow-400">⚡</span>
-              <p className="text-sm text-zinc-200">
-                {insight}
-              </p>
+              {insight}
             </div>
           ))}
         </div>
       </div>
-      
-      {/* Revenue Chart */}
+
+      {/* Placeholder for Future Widget */}
       <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-xl">
-        <h2 className="text-xl font-semibold mb-4">
-          Revenue Trend (Last 7 Days)
+        <h2 className="text-lg font-semibold mb-4">
+          Top Products (Coming Soon)
         </h2>
 
-        <RevenueChartClient data={data.revenueTrend || []} />
+        <p className="text-zinc-400 text-sm">
+          Product analytics will appear here.
+        </p>
       </div>
+
     </div>
-  )
+  </div>
+)
 }
