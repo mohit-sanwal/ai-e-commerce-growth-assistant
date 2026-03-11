@@ -44,7 +44,7 @@ export default function AddProductForm() {
       <h2 className="text-lg font-semibold">Add Product</h2>
 
       <input
-        className="w-full border p-2 rounded"
+        className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500"
         placeholder="Product Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
@@ -54,7 +54,7 @@ export default function AddProductForm() {
       <input
         type="number"
         step="0.01"
-        className="w-full border p-2 rounded"
+        className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500"
         placeholder="Price"
         value={price}
         onChange={(e) => setPrice(e.target.value)}
@@ -62,7 +62,7 @@ export default function AddProductForm() {
       />
 
       <input
-        className="w-full border p-2 rounded"
+        className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white-500"
         placeholder="Category"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
@@ -71,7 +71,7 @@ export default function AddProductForm() {
 
       <input
         type="number"
-        className="w-full border p-2 rounded"
+        className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500"
         placeholder="Stock"
         value={stock}
         onChange={(e) => setStock(e.target.value)}
