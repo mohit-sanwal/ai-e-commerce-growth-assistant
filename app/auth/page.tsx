@@ -1,12 +1,10 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "../api/auth/[...nextauth]/route"
 import { redirect } from "next/navigation"
 import AuthPageClient from "@/components/AuthPageClient"
+import { requireAuth } from "@/lib/requireAuth";
 
 export default async function AuthPage() {
-  const session = await getServerSession(authOptions)
-
-  if (session) {
+  const session = await requireAuth();
+  if (session?.user?.email) {
     redirect("/dashboard")
   }
 

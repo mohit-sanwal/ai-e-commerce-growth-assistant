@@ -35,7 +35,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
+A SaaS dashboard for e-commerce sellers to manage inventory, track orders, and analyze revenue using AI insights.
 
 🤖 What Is an AI E-Commerce Growth Assistant?
 
@@ -54,3 +54,16 @@ The system tells you:
 “Revenue dropped 18% this week.”
 “Consider increasing price of X.”
 That is a growth assistant.
+
+
+
+Options  |  Purpose
+
+Dashboard | Quick overview of business performance
+Products  | Inventory management
+Orders    | Track customer purchases
+Analytics | Purpose: Help seller make business decisions
+
+
+
+

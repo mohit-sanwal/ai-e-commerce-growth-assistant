@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { getServerSession }from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { db } from "@/lib/db"
 import { compare } from "bcryptjs"
@@ -12,6 +12,7 @@ export const authOptions = {
         password: {},
       },
       async authorize(credentials) {
+        const session = await getServerSession(authOptions)
         console.log("CREDENTIALS:", credentials);
         if (!credentials?.email || !credentials?.password) {
           console.log("Missing credentials");
@@ -25,8 +26,7 @@ export const authOptions = {
         console.log("DB USER:", user)
 
         if (!user){
-          console.log("User not found");
-          return null
+          return new Response("Unauthorized", { status: 401 })
         }
 
         const isValid = await compare(
@@ -41,6 +41,10 @@ export const authOptions = {
           return null
         }
 
+        if (!session?.user?.email) {
+          return new Response("Unauthorized", { status: 401 })
+        }
+
         return {
           id: user.id,
           email: user.email,
@@ -52,6 +56,7 @@ export const authOptions = {
   ],
   session: {
     strategy: "jwt" as const,
+    maxAge: 60 * 60 * 24 // 24 hours
   },
   secret: process.env.NEXTAUTH_SECRET,
 }

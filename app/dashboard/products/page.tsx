@@ -1,20 +1,16 @@
 import { db } from "@/lib/db"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { redirect } from "next/navigation"
 import AddProductForm from "./AddProductForm"
+import CreateOrderButton from "@/components/CreateOrderButton"
+import {getCurrentUser} from "@/lib/getCurrentUser"
 
 export default async function ProductsPage() {
-  const session = await getServerSession(authOptions)
-
-  if (!session?.user?.email) {
-    redirect("/auth")
-  }
+  const user = await getCurrentUser();
+  console.log('---product--', user);
 
   const products = await db.product.findMany({
     where: {
       user: {
-        email: session.user.email,
+        email: user.email,
       },
     },
     orderBy: {
@@ -69,6 +65,7 @@ export default async function ProductsPage() {
             <th className="p-3 text-left">Price</th>
             <th className="p-3 text-left">Stock</th>
             <th className="p-3 text-left">Created</th>
+            <th></th>
           </tr>
         </thead>
 
@@ -84,6 +81,9 @@ export default async function ProductsPage() {
               <td className="p-3">{product.stock}</td>
               <td className="p-3 text-zinc-400">
                 {new Date(product.createdAt).toLocaleDateString()}
+              </td>
+              <td>
+                <CreateOrderButton productId={product.id} />
               </td>
             </tr>
           ))}

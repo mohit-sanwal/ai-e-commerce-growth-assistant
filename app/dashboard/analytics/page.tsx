@@ -1,20 +1,13 @@
 import { db } from "@/lib/db"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { redirect } from "next/navigation"
+import {getCurrentUser} from "@/lib/getCurrentUser"
 
 export default async function AnalyticsPage() {
-
-  const session = await getServerSession(authOptions)
-
-  if (!session?.user?.email) {
-    redirect("/auth")
-  }
+  const user = await getCurrentUser();
 
   const totalProducts = await db.product.count({
     where: {
       user: {
-        email: session.user.email,
+        email: user.email,
       },
     },
   })
@@ -22,7 +15,7 @@ export default async function AnalyticsPage() {
   const totalOrders = await db.order.count({
     where: {
       user: {
-        email: session.user.email,
+        email: user.email,
       },
     },
   })
