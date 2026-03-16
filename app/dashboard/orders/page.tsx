@@ -1,20 +1,13 @@
 import { db } from "@/lib/db"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { redirect } from "next/navigation"
+import {getCurrentUser} from "@/lib/getCurrentUser"
 
 export default async function OrdersPage() {
-
-  const session = await getServerSession(authOptions)
-
-  if (!session?.user?.email) {
-    redirect("/auth")
-  }
+  const user = await getCurrentUser();
 
   const orders = await db.order.findMany({
   where: {
     user: {
-      email: session.user.email,
+      email: user.email,
     },
   },
   include: {
@@ -25,11 +18,19 @@ export default async function OrdersPage() {
   },
 })
 
-const formattedOrders = orders.map(order => ({
-  ...order,
-  totalPrice: Number(order.totalPrice),
-  productPrice: Number(order.product.price)
+
+
+ const formattedOrders  = orders.map((o) => ({
+  ...o,
+  totalPrice: Number(o.totalPrice),
+  unitPrice: Number(o.unitPrice),
+  product: {
+    ...o.product,
+    price: Number(o.product.price)
+  }
 }))
+
+// const formattedOrders = Response.json(safeOrders);
 
   console.log("orders", orders);
 

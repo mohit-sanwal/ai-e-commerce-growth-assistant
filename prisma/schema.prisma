@@ -46,13 +46,14 @@ model Product {
 model Order {
   id         String   @id @default(uuid())
   quantity   Int
-  totalPrice Decimal  @db.Decimal(10, 2)
+  unitPrice  Decimal
+  totalPrice Decimal
 
   productId  String
-  product    Product  @relation(fields: [productId], references: [id])
+  product    Product @relation(fields: [productId], references: [id])
 
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User @relation(fields: [userId], references: [id])
 
   createdAt  DateTime @default(now())
 }

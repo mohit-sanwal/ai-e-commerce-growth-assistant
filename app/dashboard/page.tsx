@@ -1,7 +1,5 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "../api/auth/[...nextauth]/route"
-import { redirect } from "next/navigation"
 import RevenueChartClient from "@/components/RevenueChartClient"
+import {getCurrentUser} from "@/lib/getCurrentUser"
 
 async function getInsights() {
   const res = await fetch(
@@ -15,11 +13,7 @@ async function getInsights() {
 }
 
 export default async function Dashboard() {
-  const session = await getServerSession(authOptions)
-
-  if (!session) {
-    redirect("/auth")
-  }
+  const user = await getCurrentUser();
 
   const data = await getInsights()
   console.log("data.revenueTrend..", data.revenueTrend);

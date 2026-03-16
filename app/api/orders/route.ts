@@ -20,6 +20,10 @@ export async function POST(req: Request) {
 
   const { productId, quantity } = await req.json()
 
+  if (!productId || !quantity || quantity <= 0) {
+    return new Response("Invalid order data", { status: 400 })
+  }
+
   try {
     const result = await db.$transaction(async (tx) => {
 
@@ -42,8 +46,9 @@ export async function POST(req: Request) {
       }
 
       // 2️⃣ Fetch product price (after stock confirmed)
-      const product = await tx.product.findUnique({
-        where: { id: productId }
+     const product = await tx.product.findUnique({
+        where: { id: productId },
+        select: { id: true, price: true }
       })
 
       if (!product) {
@@ -54,7 +59,8 @@ export async function POST(req: Request) {
       const order = await tx.order.create({
         data: {
           quantity,
-          totalPrice: Number(product.price) * quantity,
+          unitPrice: product.price,
+          totalPrice: product.price.mul(quantity),
           userId: user.id,
           productId: product.id
         }
