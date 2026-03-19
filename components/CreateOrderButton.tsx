@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import toast from "react-hot-toast";
 
 export default function CreateOrderButton({ productId }: { productId: string }) {
 
@@ -24,9 +25,10 @@ export default function CreateOrderButton({ productId }: { productId: string }) 
       })
 
       if (!res.ok) {
-        alert("Failed to create order")
+        toast.error("Failed to create order");
         return
       }
+      toast.success("Order placed successfully 🎉");
 
       router.refresh() // refresh server data
     } catch (err) {
